@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Квиз игра</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous">
+    </script>
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/index}">КВИЗ - игра-викторина</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <p class="nav-link disabled" th:text="${username}"></p>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br/><br/>
+<div class="container">
+    <div class="row">
+        <h1 class="text-center"> Комната: </h1>
+        <h1 class="text-center" th:text="${game.roomName}"> название </h1>
+
+        <button class="btn btn-primary" type="button"
+                id="startGameBtn" th:data-roomLink="${game.roomLink}"
+                onclick="nextQuestion(null);">
+            Начать игру
+        </button>
+    </div>
+    <div class="row">
+        <div class="container">
+            <div class="row">
+                <div id="quizQuestion"></div>
+                <table id="quizAnswers">
+                    <tr>
+                        <td>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</br>
+<div class="container">
+    <div class="row">
+        <span>Участники игры:</span>
+    </div>
+    <div class="row">
+        <table>
+            <tr th:each="username: ${game.getPlayers()}">
+                <td th:text="${username}">username</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    nextQuestion = function (questionAnswer) {
+        document.getElementById('startGameBtn').setAttribute('hidden', '');
+
+        var url = window.location.origin + '/game/questions/next';
+        var data = {};
+
+        var roomLink = document.getElementById("startGameBtn").getAttribute('data-roomLink');
+
+        data.roomLink = roomLink;
+        data.answer = questionAnswer;
+
+        var settings = {
+            /* Set proper headers before sendOkz */
+            beforeSend: function (xhr, options) {
+                xhr.setRequestHeader("content-type", "application/json");
+            },
+            type: 'POST',
+            url: url,
+            data: JSON.stringify(data)
+        }
+
+        /* Send request to backend with above settings and provide success callback */
+        $.ajax(settings).done(function (result) {
+            console.log(result);
+            printQuestion(result, roomLink);
+        });
+    };
+
+    printQuestion = function (data, roomLink) {
+
+        var divv = document.createElement(`div`);
+        divv.appendChild(document.createTextNode(data.text));
+
+        $("#quizQuestion div").remove();
+        document.getElementById('quizQuestion').appendChild(divv);
+        var tableRef = document.getElementById('quizAnswers');
+        $("#quizAnswers tr").remove();
+        for (var i = 0; i < data.answers.length; i++) {
+            var newRow = tableRef.insertRow(i);
+            var cell = newRow.insertCell(0);
+
+            var answer = '<a id="myLink" href="#" onClick="nextQuestion(\'' + data.answers[i] + '\');return false;">' + data.answers[i] + '</a>';
+            const template = document.createElement('template');
+            template.innerHTML = answer;
+            const result = template.content.children[0];
+
+            cell.append(result);
+        }
+    }
+</script>
+</body>
+</html>

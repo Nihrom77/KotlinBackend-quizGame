@@ -1,0 +1,8 @@
+spring:
+  liquibase:
+    enabled: true
+    change-log: classpath:dbscripts/changelog.xml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/quiz?ApplicationName=quizGame
+    username: postgres
+    password: postgres

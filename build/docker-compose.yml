@@ -1,0 +1,41 @@
+version: '3.5'
+
+services:
+  postgres:
+    container_name: quiz_postgres_container
+    image: postgres
+    environment:
+      POSTGRES_DB: quiz
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /var/lib/postgresql/data/quiz
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  #S3-хранилище
+#  minio-sberbilling:
+#    container_name: minio-sberbilling-sft
+#    image: 'docker.io/bitnami/minio:2020-debian-10'
+#    ports:
+#      - '9001:9000'
+#    environment:
+#      - MINIO_ACCESS_KEY=123
+#      - MINIO_SECRET_KEY=123
+#    volumes:
+#      - 'minio_data-sberbilling:/data'
+#    restart: unless-stopped
+#    networks:
+#      - network_sft_billing
+
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:

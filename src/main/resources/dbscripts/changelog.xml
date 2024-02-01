@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+                   logicalFilePath="changelog.xml">
+
+    <changeSet author="RSKrasnenkov" id="init_changeset">
+        <comment>Создание структуры БД</comment>
+        <sqlFile path="init_user.sql" relativeToChangelogFile="true"/>
+        <sqlFile path="init.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet author="RSKrasnenkov" id="sample data">
+        <comment>Наполнение БД предсозданными данными</comment>
+        <sqlFile path="sample_data.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+
+</databaseChangeLog>
