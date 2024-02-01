@@ -14,27 +14,22 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - postgres
+      - quiz
     restart: unless-stopped
 
-  #S3-хранилище
-#  minio-sberbilling:
-#    container_name: minio-sberbilling-sft
-#    image: 'docker.io/bitnami/minio:2020-debian-10'
-#    ports:
-#      - '9001:9000'
-#    environment:
-#      - MINIO_ACCESS_KEY=123
-#      - MINIO_SECRET_KEY=123
-#    volumes:
-#      - 'minio_data-sberbilling:/data'
-#    restart: unless-stopped
-#    networks:
-#      - network_sft_billing
-
+  quizGame:
+    container_name: quiz_container
+    image: sberschool-kotlin-quizgame
+    environment:
+      SPRING_ACTIVE_PROFILE: docker
+    ports:
+      - "8080:8080"
+    networks:
+      - quiz
+    restart: unless-stopped
 
 networks:
-  postgres:
+  quiz:
     driver: bridge
 
 volumes:
